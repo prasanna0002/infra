@@ -1,5 +1,5 @@
 FROM nginx:latest
 WORKDIR /usr/share/nginx/html
-COPY ./UI/dist/* .
+COPY . .
 EXPOSE 80
 
