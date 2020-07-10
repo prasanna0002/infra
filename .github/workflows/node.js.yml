@@ -38,5 +38,11 @@ jobs:
     - run: docker push prasanna002/nodejs
       
     - name: deploy  to ECS
-      run: chmod 777 ./UI/deployment.sh
-    - run: ./UI/deployment.sh
+      run: chmod 777 ./UI/deploy.sh
+    - name: Deploy to ec2
+      uses: appleboy/ssh-action@master
+      env:
+        USERNAME: ec2-user
+        HOST: ec2-34-229-232-99.compute-1.amazonaws.com
+        SCRIPT: ~/deploy.sh
+        KEY: ${{ secrets.SSH_DEPLOYMENT_KEY }}    
