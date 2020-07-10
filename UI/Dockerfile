@@ -1,4 +1,4 @@
-FROM nodejs:latest
+FROM node
 COPY ./UI/ .
 WORKDIR /usr/share/nginx/html
 
