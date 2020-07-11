@@ -1,6 +1,6 @@
-FROM node
-COPY ./UI/ .
+FROM nginx
+COPY ./UI/  /tmp
+RUN cp -Rf /tmp/dist/* /usr/share/nginx/html/
 WORKDIR /usr/share/nginx/html
-
-EXPOSE 8080
+EXPOSE 80
 
