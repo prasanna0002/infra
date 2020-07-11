@@ -44,5 +44,5 @@ jobs:
           USERNAME: ec2-user
           PORT: 22
           KEY: ${{ secrets.SSH_DEPLOYMENT_KEY }}
-          script: sudo systemctl start docker && docker run -itd --rm --privileged -p 8081:80 --name node-UI prasanna002/nodenginx
+          script: sudo systemctl start docker && sudo docker run -itd --rm --privileged -p 8081:80 --name node-UI prasanna002/nodenginx
  
