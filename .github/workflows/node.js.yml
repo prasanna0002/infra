@@ -14,35 +14,35 @@ jobs:
 
     runs-on: ubuntu-latest
 
-
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 
+    - name: Use Node.js 14.x
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - run: npm run --prefix ./UI
-    - run: npm build --prefix ./UI    
-    - name: Configure AWS credentials from Test account
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-    
-    
-    - name: Build Docker container
-      run: docker build -t prasanna002/nodejs --file ./UI/Dockerfile .
-    - run: docker login -u ${{ secrets.DOCKER_USER }} 
-             -p ${{ secrets.DOCKER_PASS }}
-    - run: docker push prasanna002/nodejs
+    - run: npm install  --prefix ./UI
+    - run: npm run build --prefix ./UI
+
       
-    - name: deploy  to ECS
-      run: chmod 777 ./UI/deploy.sh
-    - name: Deploy to ec2
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+         name: build
+         path: ./UI/dist
+
+    - uses: actions/download-artifact@master
+    - name: Build Docker container1
+      run: docker build -t prasanna002/nodenginx --file ./UI/Dockerfile .
+    - run: docker login -u prasanna002 -p Muthala@123P         
+    - run: docker push prasanna002/nodenginx
+      
+  
+    - name: Executing remote  command
       uses: appleboy/ssh-action@master
-      env:
-        USERNAME: ec2-user
-        HOST: ec2-34-229-232-99.compute-1.amazonaws.com
-        SCRIPT: ~/deploy.sh
-        KEY: ${{ secrets.SSH_DEPLOYMENT_KEY }}    
+      with:
+          host: ec2-35-168-13-144.compute-1.amazonaws.com
+          USERNAME: ec2-user
+          PORT: 22
+          KEY: ${{ secrets.SSH_DEPLOYMENT_KEY }}
+          script: sudo systemctl start docker && docker run -itd --rm --privileged -p 8081:80 --name node-UI prasanna002/nodenginx
+ 
